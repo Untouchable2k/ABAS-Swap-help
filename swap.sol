@@ -48,18 +48,18 @@ contract ABAS_Swap {
             uint amountOut = constant_product_pair.swap(swapData);
         
             // Check minOut to prevent slippage (example of using 0 for minOut has no slippage protection)
-            require(amountOut >= minOut, "You would not recieve enough tokens for this swap, try again slippage issue");
+            require(amountOut >= minAmountOfETH, "You would not recieve enough tokens for this swap, try again slippage issue");
         
             // Call the withdraw function of the WETH contract
             WETH.withdraw(IERC20(ETH).balanceOf(address(this)));
 
-            (bool sent, ) = _to.call{value: address(this).balance )}("");
+            (bool sent, ) = _to.call{value: address(this).balance }("");
             require(sent, "Failed to send Ether");
     }
 
   
   // Example swapping between tokens on a constant-product pool
-    function swapToABAS(address payable _to, uint AmountOfETH, uint minAmountOfABAS) public {
+    function swapToABAS(address payable _to, uint AmountOfETH, uint minAmountOfABAS) public payable {
             require(AmountOfETH <= msg.value,"Amount of eth to swap must be same or less than msg.value");
             
             // Call the withdraw function of the WETH contract
@@ -78,10 +78,10 @@ contract ABAS_Swap {
         */
           uint wethBalanceOnContract = IERC20(ETH).balanceOf(address(this));
           // Transfer the specified amount of WETH to BentoBox
-            WETH.transfer(address(bentobox), wethBalanceOnContract);
+            IERC20(ETH).transfer(address(bentobox), wethBalanceOnContract);
         
             // Deposit the specified amount of ABAS into BentoBox
-            bentobox.deposit(WETH, address(bentobox), address(constant_product_pair), wethBalanceOnContract, 0);
+            bentobox.deposit(ETH, address(bentobox), address(constant_product_pair), wethBalanceOnContract, 0);
         
             // Encode call data to make the swap
             bytes memory swapData = abi.encode(address(WETH), address(this), true);
@@ -90,7 +90,7 @@ contract ABAS_Swap {
             uint amountOut = constant_product_pair.swap(swapData);
         
             // Check minOut to prevent slippage (example of using 0 for minOut has no slippage protection)
-            require(amountOut >= minOut, "You would not recieve enough tokens for this swap, try again slippage issue");
+            require(amountOut >= minAmountOfABAS, "You would not recieve enough tokens for this swap, try again slippage issue");
         
             // Call the transfer to the person intended
             ABAS.transfer(_to, ABAS.balanceOf(address(this)));
