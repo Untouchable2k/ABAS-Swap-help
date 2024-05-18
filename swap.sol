@@ -8,7 +8,7 @@ import "./IERC20.sol";
 
 interface IWETH {
     function withdraw(uint256 amount) external;
-    function deposit(uint256 amount) external;
+    function deposit() payable external;
 }
 
 
@@ -59,12 +59,12 @@ contract ABAS_Swap {
 
   
   // Example swapping between tokens on a constant-product pool
-    function swapToABAS(address payable _to, uint AmountOfETH, uint minAmountOfABAS) public payable {
-            require(AmountOfETH <= msg.value,"Amount of eth to swap must be same or less than msg.value");
+    function swapToABAS(address payable _to, uint minAmountOfABAS) public payable {
             
             // Call the withdraw function of the WETH contract
-            WETH.deposit(address(this).balance);
-/*
+            WETH.deposit{value: msg.value}();
+
+            /*
             uint ABAS_Balance_is = ABAS.balanceOf(address(this));
             // Transfer the specified amount of ABAS to BentoBox
             ABAS.transfer(address(bentobox), ABAS_Balance_is);
@@ -84,7 +84,7 @@ contract ABAS_Swap {
             bentobox.deposit(ETH, address(bentobox), address(constant_product_pair), wethBalanceOnContract, 0);
         
             // Encode call data to make the swap
-            bytes memory swapData = abi.encode(address(WETH), address(this), true);
+            bytes memory swapData = abi.encode(address(ETH), address(this), true);
 
             // Execute the Swap
             uint amountOut = constant_product_pair.swap(swapData);
