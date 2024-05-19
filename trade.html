@@ -120,8 +120,10 @@
 
 
 <br></br>
-<div id="lpAllowance">ABAS ALLOWANCE ON CONTRACT: ? Connect Wallet</div>
+<div id="lpAllowance">ABAS ALLOWANCE ON TRADE CONTRACT: ? Connect Wallet</div>
+   <a id="tradeAddressLink" href="#"><h5 id="tradeAddressHeading">Trade Contract Address: {{this.tradeAddress}}</h5>
 
+   <a id="222222" href="https://github.com/AbasToken/AbasToken.github.io"><h5 id="tradeAddressHeading">Improve this code, view code on Github</h5>
 
 <button id="estimateGas12" hidden >estimateGasx3</button>
 <button id="addLiquidityBtn2" hidden>Add Liquidity Helper Button</button>
@@ -134,6 +136,14 @@
 	let userAddy;
 	let ratiozLP;
 	const tradeAddress = '0x6CAEEd6Fa9A00b1A3a1F45347060c06a89f0A90D';
+	// Construct the URL to the Arbiscan contract page
+    const contractUrl = `https://arbiscan.io/address/${tradeAddress}`;
+
+    // Set the href and text content of the link
+    const tradeAddressLink = document.getElementById('tradeAddressLink');
+    tradeAddressLink.href = contractUrl;
+    
+	document.getElementById('tradeAddressHeading').textContent = `Trade Contract Address: ${tradeAddress}`;
 	const tradeABI =[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"stateMutability":"payable","type":"fallback"},{"inputs":[],"name":"ABAS","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ETH","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"USDT","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"contract IWETH","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"bentobox","outputs":[{"internalType":"contract IBentoBoxV1","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"constant_product_pair","outputs":[{"internalType":"contract IPool","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"stable_product_pair","outputs":[{"internalType":"contract IPool","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address payable","name":"_to","type":"address"},{"internalType":"uint256","name":"minAmountOfABAS","type":"uint256"}],"name":"swapToABAS","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address payable","name":"_to","type":"address"},{"internalType":"uint256","name":"AmountOfABAS","type":"uint256"},{"internalType":"uint256","name":"minAmountOfETH","type":"uint256"}],"name":"swapToETH","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
 	
 	
@@ -653,7 +663,7 @@ await fetchMinAmountOfTokens();
 	    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer); // Define `tokenAddress` and `tokenABI`
 	    tokenAllowance = await tokenContract.allowance(userAddress, spenderAddress);
 	    const allowanceDisplay = ethers.utils.formatEther(tokenAllowance);
-	    document.getElementById('lpAllowance').innerText = `ABAS ALLOWANCE ON CONTRACT: ${allowanceDisplay}`;
+	    document.getElementById('lpAllowance').innerText = `ABAS ALLOWANCE ON TRADE CONTRACT: ${allowanceDisplay}`;
 	  
 	    return tokenAllowance.toString(); // Convert BigNumber to string
 	}
@@ -934,7 +944,7 @@ await fetchMinAmountOfTokens();
 		    	    if (datazzzzzzz.includes("TransferFrom failed")) {
 		    		alert("Lower your ABAS Amount you are over max");
 		    		} if (datazzzzzzz.includes("Sub underflow")) {
-		    		alert("Lower your ABAS Amount you are over your max");
+		    		alert("Lower your ABAS Amount you are over your max amount");
 		    		}
 		    		
 		    		
@@ -1091,8 +1101,20 @@ await fetchMinAmountOfTokens();
 	    ratioz = await fetchLPTokenBalanceABAS(); //FETCH LP Asset balances
             await fetchBalances(); // Fetch balances after wallet is connected
 	    
+	    const approveMasterContractBtn = document.getElementById('tokenAmountInput');
+	    const approveMasterContractBtn2 = document.getElementById('tokenAmountInput2');
+	    const approveMasterContractBtn4 = document.getElementById('ethAmountInput');
+	    const approveMasterContractBtn5 = document.getElementById('ethAmountInput2');
+	    const approveMasterContractBtn3 = document.getElementById('maxTokenBtn');
+	    const approveMasterContractBtn10 = document.getElementById('maxTokenBtn2');
+	    const approveMasterContractBtn6 = document.getElementById('swapType');
+	    const approveMasterContractBtn7 = document.getElementById('swapType2');
+	    const approveMasterContractBtn8 = document.getElementById('outputETH');
+	    const approveMasterContractBtn9 = document.getElementById('outputABAS');
+	    const approveMasterContractBtn11 = document.getElementById('trade2Btn');
+	    const approveMasterContractBtn12 = document.getElementById('trade2ETHBtn');
 	    
-	    if (check == 0) {
+	    if (check == 1) {
 		approveMasterContractBtn.style.display = 'none'; // Hide the button
 		approveMasterContractBtn2.style.display = 'none'; // Hide the button
 		approveMasterContractBtn3.style.display = 'none'; // Hide the button
@@ -1115,7 +1137,7 @@ await fetchMinAmountOfTokens();
 	    
 		approveMasterContractBtn11.style.visibility = 'hidden'; // Hide the button
 	    
-		check = 1;
+		check = 0;
 	    } else {
 		approveMasterContractBtn.style.display = ''; // Show the button if not approved
 		approveMasterContractBtn2.style.display = ''; // Show the button if not approved
@@ -1131,7 +1153,7 @@ await fetchMinAmountOfTokens();
 		approveMasterContractBtn7.style.display = 'none'; // Hide the button
 		approveMasterContractBtn9.style.display = 'none'; // Hide the button
 		approveMasterContractBtn10.style.display = 'none'; // Hide the button
-		check = 0;
+		check = 1;
 		
 	    	    trade2ETHBtn.style.visibility = 'hidden';
 	    	    
@@ -1488,10 +1510,11 @@ await fetchMinAmountOfTokens();
 	    console.log("@@@@@: 2:: ",parseFloat(tokenAllowance.toString()));
 	    if (tokenalues > parseFloat(tokenAllowance.toString())) {
 	    	    trade2ETHBtn.style.visibility = 'hidden';
-	    	    approveTokenBtn.style.visibility = 'visible';
+	    	    approveTokenBtn.style.visibility = 'hidden';
 	    	    
-	    	    		approveTokenBtn.style.display = '';
-	  	    alert("3Your input exceeds your allowance. Please approve more tokens before adding liquidity.");
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.display = 'none';
+	  	  //  alert("3Your input exceeds your allowance. Please approve more tokens before adding liquidity.");
 	    } else {
 	    	    trade2ETHBtn.style.visibility = 'visible';
 	    	    approveTokenBtn.style.visibility = 'hidden';
