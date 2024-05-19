@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/modern-business.css" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.0.2/bignumber.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>Add Liquidity to SushiSwap Trident Pool</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+</head>
+<body>
+ 
+       <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html" target="_self" aria-label="FORGE"><img alt="FORGE" src="img/forgeprofile circle-02.png" width="100px" height="110px" class="img-responsive"></a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right"> <li>
+                        <a href="/" style="font-size:1.1em">Home</a>
+                    </li>
+                  <li>
+                    <a href="https://evm-9wzybb6h4.sushi.com/swap?fromChainId=42161&fromCurrency=NATIVE&toChainId=42161&toCurrency=0x0B549125fbEA37E52Ee05FA388a3A0a7Df792Fa7&amount=0.0000001&chainId=42161&token0=NATIVE&token1=0x0B549125fbEA37E52Ee05FA388a3A0a7Df792Fa7&swapAmount=0.01" style="font-size:1.1em">Buy ABAS</a>
+                </li>     
+                    <!--an ordered list stan made me remove 3 times-->
+                   <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size:1.25em">Liquidity<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+
+                            <li>
+                                <a href="addLiq.html"style="font-size:1.1em">Add Liquidity to ABAS/ETH</a>
+                            </li>
+                            <li>
+                                <a href="removeLiq.html"style="font-size:1.1em">Remove Liquidity from ABAS/ETH</a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/dapp/" style="font-size:1.1em">DAPP - Stake & Auctions</a>
+                    </li>
+                    <li>
+                        <a href="stats.html"style="font-size:1.1em">Token Stats</a>
+                    </li>                    
+                    <!--an ordered list stan made me remove 3 times-->
+                   <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size:1.25em">ABAS Instructions<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+
+                            <li>
+                                <a href="whitepaper.html"style="font-size:1.1em">Whitepaper</a>
+                            </li>
+                            <li>
+                                <a href="howtoauction.html"style="font-size:1.1em">How to Auction</a>
+                            </li>
+                            <li>
+                                <a href="howtostake.html"style="font-size:1.1em">How to Stake</a>
+                            </li>
+                            <li>
+                                <a href="howtomine.html"style="font-size:1.1em">How to Mine</a>
+                            </li>
+                            <li>
+                                <a href="team.html"style="font-size:1.1em">Contact Us</a>
+                            </li>
+                        </ul>
+                    </li>
+                        </ul>
+            </div>
+            <!-- class /.navbar-collapse -->
+        </div>
+        <!-- class /.container -->
+    </nav>
+    
+    <center>
+   <h2>Buy/Sell ABAS Token on Sushiswap</h2>
+<button id="connectWalletBtn">Connect Wallet</button><br>
+<div>
+<button id="swapType">Click to Swap ETH -> ABAS</button>
+<button id="swapType2">Click to Swap ABAS -> ETH</button>
+<div id="YourAddress">Your connected address: ? Connect Wallet</div>
+<div id="reloadTimer">Next reload in: 20 seconds</div>
+<div id="YourBalanceABAS">Your ABAS Balance: ? Connect Wallet</div>
+<div id="YourBalanceETH">Your ETH Balance: ? Connect Wallet</div>
+    <label id="tokenAmountInput2">Input ABAS Token Amount:</label>
+    <input id="tokenAmountInput" type="number" min="0" placeholder="Token Amount">
+     <button id="maxTokenBtn">Max</button>
+     
+</div>
+<div>
+    <label id="ethAmountInput2">Input ETH Amount:</label>
+    <input id="ethAmountInput" type="number" min="0" step="0.0000001" placeholder="ETH Amount">
+    
+     <button id="maxTokenBtn2">Max</button>
+</div>
+     
+<div id="outputETH">ETH to Recieve: ? Connect Wallet</div>
+<div id="outputABAS">ABAS to Recieve: ? Connect Wallet</div><br>
+
+<button id="approveTokenBtn">Approve ABAS Token</button>
+<button id="trade2Btn">Trade ETH to ABAS</button>
+
+<button id="trade2ETHBtn">Trade ABAS to ETH</button>
+
+
+<br></br>
+<div id="lpAllowance">ABAS ALLOWANCE ON CONTRACT: ? Connect Wallet</div>
+
+
+<button id="estimateGas12" hidden >estimateGasx3</button>
+<button id="addLiquidityBtn2" hidden>Add Liquidity Helper Button</button>
+<button id="approveTokenBtn2222" hidden>Helper Approve ABAS Token Button</button>
+</center>
+    <script type="text/javascript">
+    	let GotBalances = 0;
+        let signer;
+	let provider;
+	let userAddy;
+	let ratiozLP;
+	const tradeAddress = '0x6CAEEd6Fa9A00b1A3a1F45347060c06a89f0A90D';
+	const tradeABI =[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"stateMutability":"payable","type":"fallback"},{"inputs":[],"name":"ABAS","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ETH","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"USDT","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"contract IWETH","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"bentobox","outputs":[{"internalType":"contract IBentoBoxV1","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"constant_product_pair","outputs":[{"internalType":"contract IPool","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"stable_product_pair","outputs":[{"internalType":"contract IPool","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address payable","name":"_to","type":"address"},{"internalType":"uint256","name":"minAmountOfABAS","type":"uint256"}],"name":"swapToABAS","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address payable","name":"_to","type":"address"},{"internalType":"uint256","name":"AmountOfABAS","type":"uint256"},{"internalType":"uint256","name":"minAmountOfETH","type":"uint256"}],"name":"swapToETH","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
+	
+	
+        const contractAddress = '0xD9988b4B5bBC53A794240496cfA9Bf5b1F8E0523';
+        const contractABI = [
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "tokenInput",
+                "type": "tuple[]",
+                "components": [
+                    {"name": "token", "type": "address"},
+                    {"name": "native", "type": "bool"},
+                    {"name": "amount", "type": "uint256"}
+                ]
+            },
+            {"name": "pool", "type": "address"},
+            {"name": "minLiquidity", "type": "uint256"},
+            {"name": "data", "type": "bytes"}
+        ],
+        "name": "addLiquidity",
+        "outputs": [
+            {"name": "liquidity", "type": "uint256"}
+        ],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+    }
+];
+
+	const spenderAddress = tradeAddress;
+
+        const tokenAddress = '0x0B549125fbEA37E52Ee05FA388a3A0a7Df792Fa7';
+        const tokenABI = [
+    {
+        "inputs": [
+            {
+                "name": "spender",
+                "type": "address"
+            },
+            {
+                "name": "tokens",
+                "type": "uint256"
+            }
+        ],
+        "name": "approve",
+        "outputs": [
+            {
+                "name": "success",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "tokenOwner",
+                "type": "address"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+    "inputs": [
+      {
+        "name": "tokenOwner",
+        "type": "address"
+      },
+      {
+        "name": "spender",
+        "type": "address"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "name": "remaining",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+];
+
+
+
+        const LPtokenAddress = '0x911a89dE0430A5cE3699E57D508f8678Afa1fffc';
+        const LPtokenABI = [
+    {
+        "inputs": [],
+        "name": "getReserves",
+        "outputs": [
+            {"internalType": "uint112", "name": "_reserve0", "type": "uint112"},
+            {"internalType": "uint112", "name": "_reserve1", "type": "uint112"},
+            {"internalType": "uint32", "name": "_blockTimestampLast", "type": "uint32"}
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [
+            {"internalType": "uint256", "name": "", "type": "uint256"}
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+];
+
+
+
+
+
+
+
+
+        const LPBENTOAddress = '0x74c764d41b77dbbb4fe771dab1939b00b146894a'; 
+        const LPBENTOtokenABI = [
+  {
+    "inputs": [
+      {
+        "name": "",
+        "type": "address"
+      },
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "masterContractApproved",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "name": "masterContract",
+        "type": "address"
+      },
+      {
+        "name": "approved",
+        "type": "bool"
+      },
+      {
+        "name": "v",
+        "type": "uint8"
+      },
+      {
+        "name": "r",
+        "type": "bytes32"
+      },
+      {
+        "name": "s",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setMasterContractApproval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }];
+
+
+
+
+
+
+
+
+
+
+
+
+
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+
+                    const { chainId } = await provider.getNetwork();
+            	     userAddy = await signer.getAddress();
+                    document.getElementById('YourAddress').innerText = `Your connected address: ${userAddy}`;
+                    if (chainId !== 42161) { // Check if the chain ID is not 324
+                                        alert('You are on the wrong network. Please switch to the correct network. Arbitrum One Blockchain, ChainID: 42161');
+                                        // Optionally, try to switch the user's network using window.ethereum.request
+                                        return;
+                    }
+                    console.log("Wallet connected");
+                } catch (error) {
+                    console.error("Error connecting to wallet:", error);
+                }
+            } else {
+                alert('MetaMask is not installed. Please install it to use this feature.');
+            }
+        }
+        
+        
+        
+const amountOfABAS = ethers.utils.parseUnits("0", 18); // Example amount of ABAS tokens
+const minAmountOfETH = ethers.utils.parseUnits("0", 18); // Example minimum amount of ETH
+
+// Estimate gas
+async function estimateGasx3() {
+    try {
+                const SwapContractfff = new ethers.Contract(tradeAddress, tradeABI, signer); // Define `tokenAddress` and `tokenABI`
+         const estimatedGas = await SwapContractfff.estimateGas.swapToETH(userAddy, amountOfABAS, minAmountOfETH, {
+            value: ethers.utils.parseEther("0") // Sending 0 ETH
+        });
+       console.log(`Estimated Gas: ${estimatedGas.toString()}`);
+             const gasPrice = await provider.getGasPrice();
+
+             const gasPricex3 = gasPrice * 15;
+
+        // Convert gas price from wei to gwei
+        const gasPriceInGwei = ethers.utils.formatUnits(gasPricex3, 'wei');
+	const totp= gasPriceInGwei * estimatedGas;
+	console.log("Estimate Total Price: ", totp);
+	   const ethPriceOfGas = ethers.utils.formatUnits(totp, 'wei');
+	   const ethPriceOfGasETH = ethers.utils.formatUnits(totp, 'ether');
+	console.log("Estimate Total Price in ETH:  ", ethPriceOfGasETH);
+	return ethPriceOfGas;
+    } catch (error) {
+        console.error("Error estimating gas:", error);
+    }
+}
+        
+        
+        async function fetchTokenBalance() {
+	    const userAddress = await signer.getAddress(); // Assuming signer is already initialized
+	    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer); // Define `tokenAddress` and `tokenABI`
+
+	    const balance = await tokenContract.balanceOf(userAddress);
+	    return balance.toString(); // Convert BigNumber to string
+	}
+        
+        
+        
+        async function fetchBalances() {
+            const address = await signer.getAddress();
+            const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer); // Define `tokenAddress` and `tokenABI`
+            // Fetch token balance
+            const tokenBalance = await tokenContract.balanceOf(address);
+            console.log("TBalance: ", tokenBalance);
+            document.getElementById('tokenAmountInput').max = ethers.utils.formatEther(tokenBalance);
+            const tokenBalance2html = ethers.utils.formatEther(tokenBalance);
+	    document.getElementById('YourBalanceABAS').innerText = `Your ABAS Balance: ${tokenBalance2html}`;
+            // Fetch ETH balance
+            const ethBalance = await provider.getBalance(address);	
+            const maxBalance5 = await fetchTokenBalance();
+            if(document.getElementById('ethAmountInput').max == 0){
+            	    tokenAmountInput.value = ethers.utils.formatUnits(maxBalance5, 18); // Assuming token uses 18 decimal places
+            	    
+            	    const maxBalanceza = await provider.getBalance(userAddy);	
+		    const gasNeeded = await estimateGasx3();
+		    const TotalLeft = maxBalanceza - gasNeeded;
+		    ethAmountInput.value = ethers.utils.formatUnits(TotalLeft, 18); // Assuming token uses 18 decimal places
+		    console.log("total left: ", TotalLeft);
+	   	      console.log(" Test12355 ABAS_Pool: ", ABAS_Pool.toString());
+	    console.log(" Test12355 ETH_Pool: ", ETH_Pool.toString());
+        
+	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
+	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
+	    
+	    console.log("ratio ETHAmountInput:  ", ABASAmountInput); 
+	    
+	    function parseInputValue(inputValue, decimals) {
+		    if (!inputValue || isNaN(inputValue)) {
+			return "0";
+		    }
+		    // Truncate the value to the allowed decimals
+		    const factor = 10 ** decimals;
+		    const truncatedValue = Math.floor(parseFloat(inputValue) * factor) / factor;
+		    const decimalString = scientificToDecimalStr(truncatedValue);
+		    return ethers.utils.parseUnits(decimalString.toString(), decimals);
+	    }
+	    
+		
+		
+		function decimalToBigNumber(decimalValue, decimals) {
+		    // Split the integer and decimal parts
+		    const [integerPart, decimalPart] = decimalValue.split('.');
+		    
+		    // Convert the integer part to a BigNumber
+		    const integerBigNumber = ethers.BigNumber.from(integerPart);
+
+		    // Convert the decimal part to a BigNumber, if it exists
+		    let decimalBigNumber = ethers.BigNumber.from(0);
+		    if (decimalPart) {
+			// Take only required decimal places and pad the remaining decimals with zeros
+			const trimmedDecimalPart = decimalPart.slice(0, decimals).padEnd(decimals, '0');
+			decimalBigNumber = ethers.BigNumber.from(trimmedDecimalPart);
+		    }
+
+		    // Combine the two parts
+		    return integerBigNumber.mul(ethers.BigNumber.from(10).pow(decimals)).add(decimalBigNumber);
+		}
+
+
+	    var amountInWeiOFABASToken = decimalToBigNumber(ABASAmountInput, 18);
+	    var amountInWeiOFETHToken = decimalToBigNumber(ETHAmountInput, 18);
+	    console.log("ELP Amount in WETH : ", (amountInWeiOFABASToken));
+			    // Example function to safely parse input values
+	    
+
+	    const ratioBot2 = amountInWeiOFABASToken;
+	    const ratioBot = ratioBot2.add(ABAS_Pool);
+	    const ratioBot2a = amountInWeiOFETHToken;
+	    const ratioBota = ratioBot2a.add(ETH_Pool);
+	    console.log("Test12355 ratio top: ", parseInt(amountInWeiOFABASToken)); 
+	    console.log(" Test12355 Ratio bot: ", parseInt(ratioBot));
+	    const ratiozmaybe = amountInWeiOFABASToken / ratioBot;
+	    
+	    const ratiozmaybe2 = amountInWeiOFETHToken / ratioBota;
+	    
+	    console.log("Test12355 ratio = : ", ratiozmaybe2);
+	    const minimumAmtOuta = ABAS_Pool * ratiozmaybe2;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS = : ", minimumAmtOuta);
+	    const afterfeesa = minimumAmtOuta * 0.99;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfeesa);
+	    const afterSlippagea = afterfeesa * 0.95;
+	    console.log("Test12355 ratio = : ", ratiozmaybe);
+	    const minimumAmtOut = ETH_Pool * ratiozmaybe;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS = : ", minimumAmtOut);
+	    const afterfees = minimumAmtOut * 0.99;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfees);
+	    const afterSlippage = afterfees * 0.95;
+	    console.log("Test12355 ratio afterSlippage: ",afterSlippage);
+	    console.log("Test12355 ratio try1: ", parseFloat(afterSlippage));
+	    console.log("Test12355 ratio try2: ", parseFloat(amountInWeiOFABASToken));
+	    const test1 = String(parseFloat(afterSlippage));
+	    const test2 = String(parseFloat(amountInWeiOFABASToken));
+	    const test1a = String(parseFloat(afterSlippagea));
+	    const test2a = String(parseFloat(amountInWeiOFETHToken));
+	    console.log("Test12355 ratio test1: ", test1);
+	    console.log("Test12355 ratio test2: ", test2);
+        
+        
+        
+	    document.getElementById('outputETH').innerText = `ETH to Recieve: ${test1/1e18}`;
+	    document.getElementById('outputABAS').innerText = `ABAS to Recieve: ${test1a/1e18}`;
+        
+               // Check the master contract approval status and hide the button if approved
+	    const approveMasterContractBtn = document.getElementById('tokenAmountInput');
+	    const approveMasterContractBtn2 = document.getElementById('tokenAmountInput2');
+	    const approveMasterContractBtn4 = document.getElementById('ethAmountInput');
+	    const approveMasterContractBtn5 = document.getElementById('ethAmountInput2');
+	    const approveMasterContractBtn3 = document.getElementById('maxTokenBtn');
+	    const approveMasterContractBtn10 = document.getElementById('maxTokenBtn2');
+	    const approveMasterContractBtn6 = document.getElementById('swapType');
+	    const approveMasterContractBtn7 = document.getElementById('swapType2');
+	    const approveMasterContractBtn8 = document.getElementById('outputETH');
+	    const approveMasterContractBtn9 = document.getElementById('outputABAS');
+	    const approveMasterContractBtn11 = document.getElementById('trade2Btn');
+	    const approveMasterContractBtn12 = document.getElementById('trade2ETHBtn');
+	    	const maxBalance12 = await fetchTokenBalance();
+		const maxBalance15 = await fetchTokenBalance();
+		var tokenalues =  ethers.utils.formatUnits(maxBalance15, 18); // Assuming token uses 18 decimal places
+		console.log("1: ", tokenalues);
+		console.log("2: ", parseFloat(tokenAllowance.toString()));
+		if (tokenalues > parseFloat(tokenAllowance.toString())) {
+				if(check == 0){
+				
+	    	    		approveTokenBtn.style.visibility = 'visible';
+	    	    		approveTokenBtn.style.display = '';
+				trade2ETHBtn.style.visibility = '';
+				trade2ETHBtn.style.display = 'none';
+
+				}else{
+				
+				
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.display = 'none';
+				
+
+				}
+		} else {
+				if(check == 0){
+					trade2ETHBtn.style.visibility = 'visible';
+					trade2ETHBtn.style.display = '';
+				approveTokenBtn.style.visibility = 'hidden';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		
+
+				}else{
+				
+				
+					trade2ETHBtn.style.visibility = 'hidden';
+					trade2ETHBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+	    	    		
+
+				}
+		}
+		approveMasterContractBtn.style.display = 'none'; // Hide the button
+		approveMasterContractBtn2.style.display = 'none'; // Hide the button
+		approveMasterContractBtn3.style.display = 'none'; // Hide the button
+		approveMasterContractBtn6.style.display = 'none'; // Hide the button
+		approveMasterContractBtn8.style.display = 'none'; // Hide the button
+		approveMasterContractBtn4.style.display = ''; // Show the button if not approved	
+		approveMasterContractBtn11.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn5.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn7.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn9.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn10.style.display = ''; // Show the button if not approved
+	    
+	    
+        
+	    
+	   	 document.getElementById('ethAmountInput').max = ethers.utils.formatUnits(ethBalance, 18); // Assuming token uses 18 decimal places
+
+            	document.getElementById('ethAmountInput').step = (ethers.utils.formatEther(ethBalance, 18) / 10).toFixed(8);
+            }
+            const tokenBalance2html2 = ethers.utils.formatEther(ethBalance);
+	    document.getElementById('YourBalanceETH').innerText = `Your ETH Balance: ${tokenBalance2html2}`;
+            console.log("Balances fetched");
+            
+            const tokenContractff = new ethers.Contract(LPtokenAddress, tokenABI, signer); // Define `tokenAddress` and `tokenABI`
+            // Fetch token balance
+            const tokenBalanceff = await tokenContractff.balanceOf(address);
+            console.log("TBalance: ", tokenBalance);
+            const tokenBalance2html222222  = ethers.utils.formatEther(tokenBalanceff);
+	    //document.getElementById('YourBalanceLP').innerText = `Your LP Balance: ${tokenBalance2html222222}`;
+	    
+            
+        }
+        let ABAS_Pool;
+        let ETH_Pool;
+        async function fetchLPTokenBalanceABAS() {
+	    const userAddress = await signer.getAddress(); // Assuming signer is already initialized
+	    const tokenContract = new ethers.Contract(LPtokenAddress, LPtokenABI, signer); // Define `tokenAddress` and `tokenABI`
+
+	    const balance = await tokenContract.getReserves();
+	    console.log("LP BALANCES: ", balance);
+	    const formattedBalance = ethers.utils.formatUnits(balance[0], 18);
+	    //document.getElementById('lpTokenBalanceETH').innerText = `TOTAL ABAS LP Pool ABAS Balance: ${formattedBalance}`;
+
+	    const formattedBalance2 = ethers.utils.formatUnits(balance[1], 18);
+	    //document.getElementById('lpTokenBalanceABAS').innerText = `TOTAL ABAS LP Pool ETH Balance: ${formattedBalance2}`;
+	    const formattedBalanceRatio = ethers.utils.formatUnits(balance[1], 18) / ethers.utils.formatUnits(balance[0], 18);
+	    //document.getElementById('Costof1ABASTokeninETH').innerText = `1 ABAS Token costs in ETH: ${formattedBalanceRatio}`;
+
+	    return formattedBalanceRatio; // Convert BigNumber to string
+	}
+
+        async function fetchLPTokenBalanceETH() {
+	    const userAddress = await signer.getAddress(); // Assuming signer is already initialized
+	    const tokenContract = new ethers.Contract(LPtokenAddress, LPtokenABI, signer); // Define `tokenAddress` and `tokenABI`
+
+	    const balance = await tokenContract.getReserves();
+	    console.log("LP BALANCES: ", balance);
+	    ETH_Pool = balance[1];
+	    return balance[1].toString(); // Convert BigNumber to string
+	}
+
+        async function fetchMinAmountOfTokens() {
+	    const userAddress = await signer.getAddress(); // Assuming signer is already initialized
+	    const tokenContract = new ethers.Contract(LPtokenAddress, LPtokenABI, signer); // Define `tokenAddress` and `tokenABI`
+
+	    const balance = await tokenContract.getReserves();
+	    const tSupply = await tokenContract.totalSupply();
+	    console.log("ABAS BALANCES: ", balance[0].toString());
+	    console.log("ABAS tSupply: ", tSupply.toString());
+	    ratiozLP = tSupply / balance[0];
+	    ABAS_Pool = balance[0];
+	    return balance[0].toString(); // Convert BigNumber to string
+	}
+
+        
+        
+
+        
+        
+        async function fetchTokenApproved() {
+	    const userAddress = await signer.getAddress(); // Assuming signer is already initialized
+	    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer); // Define `tokenAddress` and `tokenABI`
+	    tokenAllowance = await tokenContract.allowance(userAddress, spenderAddress);
+	    const allowanceDisplay = ethers.utils.formatEther(tokenAllowance);
+	    document.getElementById('lpAllowance').innerText = `ABAS ALLOWANCE ON CONTRACT: ${allowanceDisplay}`;
+	  
+	    return tokenAllowance.toString(); // Convert BigNumber to string
+	}
+
+        
+        async function fetchMasterContractApproved() {
+	    const userAddress = await signer.getAddress(); // Assuming signer is already initialized
+	    const masterContract = new ethers.Contract(LPBENTOAddress, LPBENTOtokenABI, signer);
+	    mastallowance = await masterContract.masterContractApproved(contractAddress, userAddress);
+	    //document.getElementById('lpMasterAllowance').innerText = `Master Allowance T/F: ${mastallowance}`;
+	   // document.getElementById('addLiquidityBtn').disabled = !mastallowance;
+	    
+	    
+	        // Check the master contract approval status and hide the button if approved
+	    
+	  
+	    return mastallowance; // Convert BigNumber to string
+	}
+
+        
+        
+        // Implement the approveToken function
+	async function approveToken() {
+	    try {
+	 	const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
+		const amountToApprove = ethers.utils.parseUnits("21000000", 18); // Example: Approve 1000 tokens (adjust the amount and decimals as needed)
+		const txResponse = await tokenContract.approve(spenderAddress, amountToApprove);
+		await txResponse.wait();
+		console.log("Token approved successfully");
+	    } catch (error) {
+		console.error("Failed to approve token: ", error);
+	    }
+	}
+	
+	
+        // Implement the approveToken function
+	async function approveMasterContract() {
+	    try {
+	 	const userAddress = await signer.getAddress(); // Assuming signer is already initialized
+	 	const masterContract = new ethers.Contract(LPBENTOAddress, LPBENTOtokenABI, signer);
+		const txResponse = await masterContract.setMasterContractApproval(userAddress, contractAddress, true, 0, "0x0000000000000000000000000000000000000000000000000000000000000000", "0x0000000000000000000000000000000000000000000000000000000000000000");
+		await txResponse.wait();
+		console.log("Master Contract approved successfully");
+		await fetchMasterContractApproved();
+	    } catch (error) {
+		console.error("Failed to approve Master Contract for you: ", error);
+	    }
+	}
+
+
+        function toFixed2(x) {
+	    if (Math.abs(x) < 1.0) {
+		const e = parseInt(x.toString().split('e-')[1]);
+		if (e) {
+		    x *= Math.pow(10, e - 1);
+		    x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+		}
+	    } else {
+		let e = parseInt(x.toString().split('+')[1]);
+		if (e > 20) {
+		    e -= 20;
+		    x /= Math.pow(10, e);
+		    x += (new Array(e + 1)).join('0');
+		}
+	    }
+	    return x;
+	}
+
+        function scientificToDecimalStr(num) {
+	    const n = new Number(num);
+	    let str = n.toString();
+	    if (str.includes('e')) {
+		str = n.toFixed2(18); // Adjust the number of decimals as needed.
+	    }
+	    // Ensure no trailing zeros or unnecessary decimal points.
+	    return str.replace(/\.?0+$/, '');
+	}
+
+
+        async function trade2() {
+            const poolABASamt = await fetchMinAmountOfTokens();
+            const poolWETHamt = await fetchLPTokenBalanceETH();
+            const contract = new ethers.Contract(contractAddress, contractABI, signer);
+            const contractTrade = new ethers.Contract(tradeAddress, tradeABI, signer);
+            // Assuming the token uses 18 decimal places; adjust if it's different
+	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
+	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
+	    
+	    
+	    function parseInputValue(inputValue, decimals) {
+		    if (!inputValue || isNaN(inputValue)) {
+			return "0";
+		    }
+		    // Truncate the value to the allowed decimals
+		    const factor = 10 ** decimals;
+		    const truncatedValue = Math.floor(parseFloat(inputValue) * factor) / factor;
+		    const decimalString = scientificToDecimalStr(truncatedValue);
+		    return ethers.utils.parseUnits(decimalString.toString(), decimals);
+	    }
+	    
+			function decimalToBigNumber(decimalValue, decimals) {
+		    // Split the integer and decimal parts
+		    const [integerPart, decimalPart] = decimalValue.split('.');
+		    
+		    // Convert the integer part to a BigNumber
+		    const integerBigNumber = ethers.BigNumber.from(integerPart);
+
+		    // Convert the decimal part to a BigNumber, if it exists
+		    let decimalBigNumber = ethers.BigNumber.from(0);
+		    if (decimalPart) {
+			// Take only required decimal places and pad the remaining decimals with zeros
+			const trimmedDecimalPart = decimalPart.slice(0, decimals).padEnd(decimals, '0');
+			decimalBigNumber = ethers.BigNumber.from(trimmedDecimalPart);
+		    }
+
+		    // Combine the two parts
+		    return integerBigNumber.mul(ethers.BigNumber.from(10).pow(decimals)).add(decimalBigNumber);
+		}
+
+	    var tokenAmountInput222 = new BigNumber(document.getElementById('tokenAmountInput').value);
+	    var weiMultiplier = new BigNumber("1e18");
+	    
+	    var tokenAmountInput222 = new BigNumber(document.getElementById('ethAmountInput').value);
+	    var weiMultiplier = new BigNumber("1e18");
+	    
+	    var amountInWeiOFWETHToken =  decimalToBigNumber(ETHAmountInput, 18);
+	    console.log("ELP Amount in WETH : ", (amountInWeiOFWETHToken.toString()));
+			    // Example function to safely parse input values
+	    
+		console.log("Initial: ELP: ", ETHAmountInput);
+	    const ratioBot2 = amountInWeiOFWETHToken;
+	    const ratioBot = ratioBot2.add(poolWETHamt);
+	    console.log("ratio top: ", parseInt(amountInWeiOFWETHToken)); 
+	    console.log("Ratio bot: ", parseInt(ratioBot));
+	    const ratiozmaybe = amountInWeiOFWETHToken / ratioBot;
+	    
+	    console.log("ratio = : ", ratiozmaybe);
+	    const minimumAmtOut = poolABASamt * ratiozmaybe;
+	    console.log("ratio MIUMUM RECIEVED IS = : ", minimumAmtOut);
+	    const afterfees = minimumAmtOut * 0.99;
+	    console.log("ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfees);
+	    const afterSlippage = afterfees * 0.95;
+	    console.log("ratio afterSlippage: ",afterSlippage);
+	    console.log("ratio try1: ", parseFloat(afterSlippage));
+	    console.log("ratio try2: ", parseFloat(amountInWeiOFWETHToken));
+	    const test1 = String(parseFloat(afterSlippage));
+	    const test2 = String(parseFloat(amountInWeiOFWETHToken));
+	    console.log("ratio test1: ", test1);
+	    console.log("ratio test2: ", test2);
+	    
+		const bigNumber = new BigNumber(afterSlippage.toString());
+		const bigNumber2 = new BigNumber(amountInWeiOFWETHToken.toString());
+	    console.log("ratio test3: ", bigNumber.toFixed()	);
+	    console.log("ratio test33: ", bigNumber2.toFixed()	);
+            try {
+       
+                const txResponse = await contractTrade.swapToABAS(userAddy, bigNumber.toFixed(0), {
+                    value: bigNumber2.toFixed(0), // If the function is payable, specify the ETH amount to send
+                });
+                await txResponse.wait();
+                console.log("Swap successful");
+            } catch (error) {
+            	console.log("error: ", error);
+		if(error.data !== undefined){
+			
+		    	console.log("Error data: ", error.data);
+		    	const datazzzzzzz = error.data.message;
+		    	    if (datazzzzzzz.includes("TransferFrom failed")) {
+		    		alert("Lower your ABAS Amount you are over max");
+		    		}
+		    		
+		    		
+		    		
+		    		
+		    		  if (datazzzzzzz.includes("insufficient")) {
+		    	
+		    		alert("insufficient funds for gas.  Check stuff.  \n"+datazzzzzzz);
+		    		
+		    		}
+		    		
+		    		}
+                console.error("Failed to add liquidity:", error);
+            }
+        }
+        
+        async function tradeABAStoETH() {
+            const poolABASamt = await fetchMinAmountOfTokens();
+            const poolWETHamt = await fetchLPTokenBalanceETH();
+            const contract = new ethers.Contract(contractAddress, contractABI, signer);
+            const contractTrade = new ethers.Contract(tradeAddress, tradeABI, signer);
+            // Assuming the token uses 18 decimal places; adjust if it's different
+	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
+	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
+	    
+	    console.log("ratio ETHAmountInput:  ", ETHAmountInput); 
+	    console.log("ratio ABASAmountInput:  ", ABASAmountInput); 
+	    
+	    function parseInputValue(inputValue, decimals) {
+		    if (!inputValue || isNaN(inputValue)) {
+			return "0";
+		    }
+		    // Truncate the value to the allowed decimals
+		    const factor = 10 ** decimals;
+		    const truncatedValue = Math.floor(parseFloat(inputValue) * factor) / factor;
+		    const decimalString = scientificToDecimalStr(truncatedValue);
+		    return ethers.utils.parseUnits(decimalString.toString(), decimals);
+	    }
+	    
+		
+		
+		function decimalToBigNumber(decimalValue, decimals) {
+		    // Split the integer and decimal parts
+		    const [integerPart, decimalPart] = decimalValue.split('.');
+		    
+		    // Convert the integer part to a BigNumber
+		    const integerBigNumber = ethers.BigNumber.from(integerPart);
+
+		    // Convert the decimal part to a BigNumber, if it exists
+		    let decimalBigNumber = ethers.BigNumber.from(0);
+		    if (decimalPart) {
+			// Take only required decimal places and pad the remaining decimals with zeros
+			const trimmedDecimalPart = decimalPart.slice(0, decimals).padEnd(decimals, '0');
+			decimalBigNumber = ethers.BigNumber.from(trimmedDecimalPart);
+		    }
+
+		    // Combine the two parts
+		    return integerBigNumber.mul(ethers.BigNumber.from(10).pow(decimals)).add(decimalBigNumber);
+		}
+
+
+	    var amountInWeiOFABASToken = decimalToBigNumber(ABASAmountInput, 18);
+	    console.log("ELP Amount in WETH : ", (amountInWeiOFABASToken));
+			    // Example function to safely parse input values
+	    
+
+	    const ratioBot2 = amountInWeiOFABASToken;
+	    const ratioBot = ratioBot2.add(poolABASamt);
+	    console.log("ratio top: ", parseInt(amountInWeiOFABASToken)); 
+	    console.log("Ratio bot: ", parseInt(ratioBot));
+	    const ratiozmaybe = amountInWeiOFABASToken / ratioBot;
+	    
+	    console.log("ratio = : ", ratiozmaybe);
+	    const minimumAmtOut = poolWETHamt * ratiozmaybe;
+	    console.log("ratio MIUMUM RECIEVED IS = : ", minimumAmtOut);
+	    const afterfees = minimumAmtOut * 0.99;
+	    console.log("ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfees);
+	    const afterSlippage = afterfees * 0.95;
+	    console.log("ratio afterSlippage: ",afterSlippage);
+	    console.log("ratio try1: ", parseFloat(afterSlippage));
+	    console.log("ratio try2: ", parseFloat(amountInWeiOFABASToken));
+	    const test1 = String(parseFloat(afterSlippage));
+	    const test2 = String(parseFloat(amountInWeiOFABASToken));
+	    console.log("ratio test1: ", test1);
+	    console.log("ratio test2: ", test2);
+	    
+		const bigNumber = new BigNumber(afterSlippage.toString());
+		const bigNumber2 = new BigNumber(amountInWeiOFABASToken.toString());
+	    console.log("ratio test3: ", bigNumber.toFixed(0)	);
+            try {
+       	console.log("ratio BigNumber2 Sent Amt: ", bigNumber2.toFixed(0));
+       	
+       	console.log("ratio BigNumber Minimum rec: ", bigNumber.toFixed(0));
+       	
+                const txResponse = await contractTrade.swapToETH(userAddy, bigNumber2.toFixed(0), bigNumber.toFixed(0));
+                await txResponse.wait();
+                console.log("Swap successful");
+            } catch (error) {
+            	console.log("error: ", error);
+		if(error.data !== undefined){
+			
+		    	console.log("Error data: ", error.data);
+		    	const datazzzzzzz = error.data.message;
+		    	    if (datazzzzzzz.includes("TransferFrom failed")) {
+		    		alert("Lower your ABAS Amount you are over max");
+		    		}
+		    		
+		    		
+		    		
+		    		
+		    		  if (datazzzzzzz.includes("insufficient")) {
+		    	
+		    		alert("insufficient funds for gas.  Check stuff.  \n"+datazzzzzzz);
+		    		
+		    		}
+		    		
+		    		}
+                console.error("Failed to add liquidity:", error);
+            }
+        }
+        
+        
+        let tokenAllowance = ethers.BigNumber.from("0");
+        
+        
+        
+        
+        
+        
+        let reloadIntervalId, countdownIntervalId;
+
+	function startDataReload() {
+	    clearInterval(reloadIntervalId); // Clear any existing data reload interval
+	    clearInterval(countdownIntervalId); // Clear any existing countdown interval
+
+	    const reloadData = async () => {
+		// Your data fetching functions here
+		await connectWallet();
+		await fetchTokenApproved();
+		ratioz = await fetchLPTokenBalanceABAS(); //FETCH LP Asset balances
+		
+		await fetchBalances();
+		await fetchMasterContractApproved();
+		const maxBalance15 = await fetchTokenBalance();
+		var tokenalues =  ethers.utils.formatUnits(maxBalance15, 18); // Assuming token uses 18 decimal places
+		console.log("1: ", tokenalues);
+		console.log("2: ", parseFloat(tokenAllowance.toString()));
+		if (tokenalues > parseFloat(tokenAllowance.toString())) {
+				if(check == 0){
+				
+	    	    		approveTokenBtn.style.visibility = 'visible';
+	    	    		approveTokenBtn.style.display = '';
+				trade2ETHBtn.style.visibility = '';
+				trade2ETHBtn.style.display = 'none';
+
+				}else{
+				
+				
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.display = 'none';
+				
+
+				}
+		} else {
+				if(check == 0){
+					trade2ETHBtn.style.visibility = 'visible';
+					trade2ETHBtn.style.display = '';
+				approveTokenBtn.style.visibility = 'hidden';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		
+
+				}else{
+				
+				
+					trade2ETHBtn.style.visibility = 'hidden';
+					trade2ETHBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+	    	    		
+
+				}
+		}
+		// Add any other data fetching functions you need to reload
+		console.log('Data reloaded');
+	    };
+
+	    const updateCountdown = () => {
+		let countdown = 20; // Reset countdown to 15 seconds for each cycle
+		clearInterval(countdownIntervalId); // Ensure to clear previous interval to prevent duplicates
+		document.getElementById('reloadTimer').innerText = `Next reload in: ${countdown} seconds`;
+		countdownIntervalId = setInterval(() => {
+		    countdown--;
+		    if (countdown >= 0) {
+		        document.getElementById('reloadTimer').innerText = `Next reload in: ${countdown} seconds`;
+		    } else {
+		        clearInterval(countdownIntervalId); // Stop the countdown when it reaches 0
+		        countdown = 15; // Optional: Reset countdown for demonstration purposes
+		        // Note: The countdown will automatically reset due to reloadData being called again.
+		    }
+		}, 1000);
+	    };
+
+	    reloadIntervalId = setInterval(async () => {
+		await reloadData();
+		// The countdown is reset here via updateCountdown at the start of each data reload cycle
+		updateCountdown(); 
+	    }, 20000); // Set to reload data every 15 seconds
+
+	    // Initial load and start of the countdown
+	    updateCountdown();
+	}
+		
+		
+		
+		
+		
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        let ratioz
+        window.onload = async () => {
+
+        
+	    startDataReload(); // Restart reloading data and countdown on wallet connect
+            console.log("min liq3: ");
+	    await connectWallet();
+	    
+		await fetchTokenApproved();
+            const poolABASamt = await fetchMinAmountOfTokens();
+            const poolWETHamt = await fetchLPTokenBalanceETH();
+	    ratioz = await fetchLPTokenBalanceABAS(); // Fetch LP Asset balances
+            console.log("min liq4: ");
+	    await fetchBalances(); // Fetch balances after wallet is connected
+	    
+            console.log("min liq5: ");
+	    await fetchLPTokenBalanceETH(); // Fetch LP Asset balances
+	    await fetchMasterContractApproved();
+	    await fetchMinAmountOfTokens();
+	};
+        document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+	    startDataReload(); // Restart reloading data and countdown on wallet connect
+        
+            console.log("min liq1: ");
+            await connectWallet();
+            console.log("min liq2: ");
+            
+		await fetchTokenApproved();
+            const poolABASamt = await fetchMinAmountOfTokens();
+            const poolWETHamt = await fetchLPTokenBalanceETH();
+	    ratioz = await fetchLPTokenBalanceABAS(); //FETCH LP Asset balances
+            await fetchBalances(); // Fetch balances after wallet is connected
+	    await fetchLPTokenBalanceETH(); //FETCH LP Asset balances
+
+	    await fetchMasterContractApproved();
+	    await fetchMinAmountOfTokens();
+	    
+	    
+	    if (check == 0) {
+		approveMasterContractBtn.style.display = 'none'; // Hide the button
+		approveMasterContractBtn2.style.display = 'none'; // Hide the button
+		approveMasterContractBtn3.style.display = 'none'; // Hide the button
+		approveMasterContractBtn6.style.display = 'none'; // Hide the button
+		approveMasterContractBtn8.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn11.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn12.style.display = ''; // Hide the button
+		approveMasterContractBtn4.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn5.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn7.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn9.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn10.style.display = ''; // Show the button if not approved
+	    	    
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    	     approveTokenBtn.style.visibility = 'hidden';
+	    	    trade2ETHBtn.style.visibility = 'visible';
+	    	    trade2ETHBtn.style.display = '';
+	    
+		approveMasterContractBtn11.style.visibility = 'hidden'; // Hide the button
+	    
+		check = 1;
+	    } else {
+		approveMasterContractBtn.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn2.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn3.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn6.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn8.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn11.style.display = ''; // Hide the button
+		
+		approveMasterContractBtn12.style.visibility = 'hidden'; // Hide the button
+		approveMasterContractBtn12.style.display = 'none'; // Hide the button
+		approveMasterContractBtn4.style.display = 'none'; // Hide the button
+		approveMasterContractBtn5.style.display = 'none'; // Hide the button
+		approveMasterContractBtn7.style.display = 'none'; // Hide the button
+		approveMasterContractBtn9.style.display = 'none'; // Hide the button
+		approveMasterContractBtn10.style.display = 'none'; // Hide the button
+		check = 0;
+		
+	    	    trade2ETHBtn.style.visibility = 'hidden';
+	    	    
+	    	
+	    	    const maxBalancef = await fetchTokenBalance();
+		var tokenalues =  ethers.utils.formatUnits(maxBalancef, 18); // Assuming token uses 18 decimal places
+	    if (tokenalues > parseFloat(tokenAllowance.toString())) {
+	    	    trade2ETHBtn.style.visibility = 'hidden'; 
+	    	    		trade2ETHBtn.style.display = 'none';
+	    	    approveTokenBtn.style.visibility = 'visible';
+	    	    
+	    	    		approveTokenBtn.style.display = '';
+	  	    alert("8Your input exceeds your allowance. Please approve more tokens before adding liquidity.");
+	    } else {
+	    	    trade2ETHBtn.style.visibility = 'visible';
+	    	    		trade2ETHBtn.style.display = '';
+	    	     approveTokenBtn.style.visibility = 'hidden';
+	    	     
+	    	    		approveTokenBtn.style.display = 'none';
+	    }
+	    
+	    
+	    }
+	});
+	
+	
+	let check =1;
+        document.getElementById('swapType').addEventListener('click', async () => {
+	    
+	            // Check the master contract approval status and hide the button if approved
+	    const approveMasterContractBtn = document.getElementById('tokenAmountInput');
+	    const approveMasterContractBtn2 = document.getElementById('tokenAmountInput2');
+	    const approveMasterContractBtn4 = document.getElementById('ethAmountInput');
+	    const approveMasterContractBtn5 = document.getElementById('ethAmountInput2');
+	    const approveMasterContractBtn3 = document.getElementById('maxTokenBtn');
+	    const approveMasterContractBtn10 = document.getElementById('maxTokenBtn2');
+	    const approveMasterContractBtn6 = document.getElementById('swapType');
+	    const approveMasterContractBtn7 = document.getElementById('swapType2');
+	    const approveMasterContractBtn8 = document.getElementById('outputETH');
+	    const approveMasterContractBtn9 = document.getElementById('outputABAS');
+	    const approveMasterContractBtn12 = document.getElementById('trade2Btn');
+	    const approveMasterContractBtn11 = document.getElementById('trade2ETHBtn');
+	    
+	    
+	    if (check == 0) {
+		approveMasterContractBtn.style.display = 'none'; // Hide the button
+		approveMasterContractBtn2.style.display = 'none'; // Hide the button
+		approveMasterContractBtn3.style.display = 'none'; // Hide the button
+		approveMasterContractBtn6.style.display = 'none'; // Hide the button
+		approveMasterContractBtn8.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn11.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn11.style.visibility = 'hidden'; // Hide the button
+		approveMasterContractBtn12.style.display = ''; // Hide the button
+		approveMasterContractBtn4.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn5.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn7.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn9.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn10.style.display = ''; // Show the button if not approved
+	    	    
+	    	    	     approveTokenBtn.style.visibility = 'hidden';
+	    	    	     
+	    	    		approveTokenBtn.style.display = 'none';
+	    trade2Btn.style.visibility = 'visible';
+	    	    		trade2Btn.style.display = '';
+	    
+		check = 1;
+	    } else {
+		approveMasterContractBtn.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn2.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn3.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn6.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn8.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn11.style.display = ''; // Hide the button
+		
+		approveMasterContractBtn12.style.visibility = 'hidden'; // Hide the button
+		approveMasterContractBtn12.style.display = 'none'; // Hide the button
+		approveMasterContractBtn4.style.display = 'none'; // Hide the button
+		approveMasterContractBtn5.style.display = 'none'; // Hide the button
+		approveMasterContractBtn7.style.display = 'none'; // Hide the button
+		approveMasterContractBtn9.style.display = 'none'; // Hide the button
+		approveMasterContractBtn10.style.display = 'none'; // Hide the button
+		check = 0;
+		
+	    	    trade2ETHBtn.style.visibility = 'hidden';
+	    	    
+	    	
+	    	    const maxBalancef = await fetchTokenBalance();
+		var tokenalues =  ethers.utils.formatUnits(maxBalancef, 18); // Assuming token uses 18 decimal places
+	    if (tokenalues > parseFloat(tokenAllowance.toString())) {
+	    	    trade2ETHBtn.style.visibility = 'hidden'; 
+	    	    trade2ETHBtn.style.display = 'none'; 
+	    	    approveTokenBtn.style.visibility = 'visible';
+	    	    
+	    	    		approveTokenBtn.style.display = '';
+	  	    alert("7Your input exceeds your allowance. Please approve more tokens before adding liquidity.");
+	    } else {
+	    	    trade2ETHBtn.style.visibility = 'visible';
+	    	    trade2ETHBtn.style.display = ''; 
+	    	     approveTokenBtn.style.visibility = 'hidden';
+	    	     
+	    	    		approveTokenBtn.style.display = 'none';
+	    }
+	    
+	    
+	    }
+	    
+	});
+	
+        document.getElementById('swapType2').addEventListener('click', async () => {
+	               // Check the master contract approval status and hide the button if approved
+	    const approveMasterContractBtn = document.getElementById('tokenAmountInput');
+	    const approveMasterContractBtn2 = document.getElementById('tokenAmountInput2');
+	    const approveMasterContractBtn3 = document.getElementById('maxTokenBtn');
+	    const approveMasterContractBtn10 = document.getElementById('maxTokenBtn2');
+	    const approveMasterContractBtn4 = document.getElementById('ethAmountInput');
+	    const approveMasterContractBtn5 = document.getElementById('ethAmountInput2');
+	    const approveMasterContractBtn6 = document.getElementById('swapType');
+	    const approveMasterContractBtn7 = document.getElementById('swapType2');
+	    const approveMasterContractBtn8 = document.getElementById('outputETH');
+	    const approveMasterContractBtn9 = document.getElementById('outputABAS');
+	    const approveMasterContractBtn12 = document.getElementById('trade2Btn');
+	    const approveMasterContractBtn11 = document.getElementById('trade2ETHBtn');
+	    
+	    if (check == 0) {
+		approveMasterContractBtn.style.display = 'none'; // Hide the button
+		approveMasterContractBtn2.style.display = 'none'; // Hide the button
+		approveMasterContractBtn3.style.display = 'none'; // Hide the button
+		approveMasterContractBtn6.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn8.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn10.style.display = ''; // Hide the button
+		approveMasterContractBtn11.style.display = 'none'; // Hide the button
+		approveMasterContractBtn11.style.visibility = 'hidden'; // Hide the button
+		
+		approveMasterContractBtn12.style.display = ''; // Hide the button
+		approveMasterContractBtn4.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn5.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn7.style.display = ''; // Show the button if not approved
+		
+		approveMasterContractBtn9.style.display = ''; // Hide the button
+
+		
+	    	    	 trade2ETHBtn.style.visibility = 'hidden';
+		
+	    	    	 trade2ETHBtn.style.display = 'none';
+	    
+		check = 1;
+	    } else {
+		approveMasterContractBtn.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn2.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn3.style.display = ''; // Show the button if not approved
+		approveMasterContractBtn6.style.display = ''; // Show the button if not approved
+		
+		approveMasterContractBtn8.style.display = ''; // Show the button if not approved
+		
+		approveMasterContractBtn12.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn12.style.visibility = 'hidden'; // Hide the button
+		approveMasterContractBtn11.style.display = ''; // Hide the button
+		approveMasterContractBtn10.style.display = 'none'; // Hide the button
+		approveMasterContractBtn4.style.display = 'none'; // Hide the button
+		approveMasterContractBtn5.style.display = 'none'; // Hide the button
+		approveMasterContractBtn7.style.display = 'none'; // Hide the button
+		
+		approveMasterContractBtn9.style.display = 'none'; // Hide the button
+		
+		check = 0;
+		const inputAmount = ethers.utils.parseUnits(tokenAmountInput.value || "0", 18);
+	    const trade2ETHBtn = document.getElementById('trade2ETHBtn');
+	    const now = Date.now(); // Current timestamp in milliseconds
+	    const diff = now - lastAlertTime; // Time difference since last alert
+
+	    const maxBalance15 = await fetchTokenBalance();
+		var tokenalues =  ethers.utils.formatUnits(maxBalance15, 18); // Assuming token uses 18 decimal places
+		console.log("1: ", tokenalues);
+		console.log("2: ", parseFloat(tokenAllowance.toString()));
+		if (inputAmount > parseFloat(tokenAllowance.toString())) {
+				if(check == 0){
+				
+	    	    		approveTokenBtn.style.visibility = 'visible';
+	    	    		approveTokenBtn.style.display = '';
+				trade2ETHBtn.style.visibility = '';
+				trade2ETHBtn.style.display = 'none';
+
+				}else{
+				
+				
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.display = 'none';
+				
+
+				}
+		} else {
+				if(check == 0){
+					trade2ETHBtn.style.visibility = 'visible';
+					trade2ETHBtn.style.display = '';
+				approveTokenBtn.style.visibility = 'hidden';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		
+
+				}else{
+				
+				
+					trade2ETHBtn.style.visibility = 'hidden';
+					trade2ETHBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+	    	    		
+
+				}
+		}
+	    
+	    
+	    
+	    }
+	    
+	});
+	
+	
+        maxTokenBtn.addEventListener('click', async () => {
+	    const maxBalance123123 = await fetchTokenBalance();
+	    tokenAmountInput.value = ethers.utils.formatUnits(maxBalance123123, 18); // Assuming token uses 18 decimal places
+	   // ethAmountInput.value = ratioz * ethers.utils.formatUnits(maxBalance, 18); // Assuming token uses 18 decimal places
+	    var tokenalues =  ethers.utils.formatUnits(maxBalance123123, 18); // Assuming token uses 18 decimal places
+	    console.log("!!!!!: 1:: ",tokenalues);
+	    console.log("@@@@@: 2:: ",parseFloat(tokenAllowance.toString()));
+	    if (tokenalues > parseFloat(tokenAllowance.toString())) {
+	    	    trade2ETHBtn.style.visibility = 'hidden';
+	    	    approveTokenBtn.style.visibility = 'visible';
+	    	    
+	    	    		approveTokenBtn.style.display = '';
+	  	    alert("4Your input exceeds your allowance. Please approve more tokens before adding liquidity.");
+	    } else {
+	    	    trade2ETHBtn.style.visibility = 'visible';
+	    	    approveTokenBtn.style.visibility = 'hidden';
+	    	    
+	    	    		approveTokenBtn.style.display = 'none';
+	    }
+	    
+	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
+	    
+	    console.log("ratio ETHAmountInput:  ", ABASAmountInput); 
+	    
+	    function parseInputValue(inputValue, decimals) {
+		    if (!inputValue || isNaN(inputValue)) {
+			return "0";
+		    }
+		    // Truncate the value to the allowed decimals
+		    const factor = 10 ** decimals;
+		    const truncatedValue = Math.floor(parseFloat(inputValue) * factor) / factor;
+		    const decimalString = scientificToDecimalStr(truncatedValue);
+		    return ethers.utils.parseUnits(decimalString.toString(), decimals);
+	    }
+	    
+		
+		
+		function decimalToBigNumber(decimalValue, decimals) {
+		    // Split the integer and decimal parts
+		    const [integerPart, decimalPart] = decimalValue.split('.');
+		    
+		    // Convert the integer part to a BigNumber
+		    const integerBigNumber = ethers.BigNumber.from(integerPart);
+
+		    // Convert the decimal part to a BigNumber, if it exists
+		    let decimalBigNumber = ethers.BigNumber.from(0);
+		    if (decimalPart) {
+			// Take only required decimal places and pad the remaining decimals with zeros
+			const trimmedDecimalPart = decimalPart.slice(0, decimals).padEnd(decimals, '0');
+			decimalBigNumber = ethers.BigNumber.from(trimmedDecimalPart);
+		    }
+
+		    // Combine the two parts
+		    return integerBigNumber.mul(ethers.BigNumber.from(10).pow(decimals)).add(decimalBigNumber);
+		}
+
+
+	    var amountInWeiOFABASToken = decimalToBigNumber(ABASAmountInput, 18);
+	    console.log("ELP Amount in WETH : ", (amountInWeiOFABASToken));
+			    // Example function to safely parse input values
+	    
+
+	    const ratioBot2 = amountInWeiOFABASToken;
+	    const ratioBot = ratioBot2.add(ABAS_Pool);
+	    console.log("Test12355 ratio top: ", parseInt(amountInWeiOFABASToken)); 
+	    console.log(" Test12355 Ratio bot: ", parseInt(ratioBot));
+	    const ratiozmaybe = amountInWeiOFABASToken / ratioBot;
+	    
+	    console.log("Test12355 ratio = : ", ratiozmaybe);
+	    const minimumAmtOut = ETH_Pool * ratiozmaybe;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS = : ", minimumAmtOut);
+	    const afterfees = minimumAmtOut * 0.99;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfees);
+	    const afterSlippage = afterfees * 0.95;
+	    console.log("Test12355 ratio afterSlippage: ",afterSlippage);
+	    console.log("Test12355 ratio try1: ", parseFloat(afterSlippage));
+	    console.log("Test12355 ratio try2: ", parseFloat(amountInWeiOFABASToken));
+	    const test1 = String(parseFloat(afterSlippage));
+	    const test2 = String(parseFloat(amountInWeiOFABASToken));
+	    console.log("Test12355 ratio test1: ", test1);
+	    console.log("Test12355 ratio test2: ", test2);
+        
+        
+        
+	    document.getElementById('outputETH').innerText = `ABAS to Recieve: ${test1/1e18}`;
+        
+        
+	    
+	    
+	    
+	    
+	    
+	});
+	
+        maxTokenBtn2.addEventListener('click', async () => {
+            const maxBalanceza = await provider.getBalance(userAddy);	
+            const gasNeeded = await estimateGasx3();
+            const TotalLeft = maxBalanceza - gasNeeded;
+	    ethAmountInput.value = ethers.utils.formatUnits(TotalLeft, 18); // Assuming token uses 18 decimal places
+	    console.log("total left: ", TotalLeft);
+//	    ethAmountInput.value = ratioz * ethers.utils.formatUnits(maxBalanceza, 18); // Assuming token uses 18 decimal places
+	    var tokenalues =  ethers.utils.formatUnits(TotalLeft, 18); // Assuming token uses 18 decimal places
+	    console.log("!!!!!: 1:: ",tokenalues);
+	    console.log("@@@@@: 2:: ",parseFloat(tokenAllowance.toString()));
+	    if (tokenalues > parseFloat(tokenAllowance.toString())) {
+	    	    trade2ETHBtn.style.visibility = 'hidden';
+	    	    approveTokenBtn.style.visibility = 'visible';
+	    	    
+	    	    		approveTokenBtn.style.display = '';
+	  	    alert("3Your input exceeds your allowance. Please approve more tokens before adding liquidity.");
+	    } else {
+	    	    trade2ETHBtn.style.visibility = 'visible';
+	    	    approveTokenBtn.style.visibility = 'hidden';
+	    	    
+	    	    		approveTokenBtn.style.display = 'none';
+	    }
+	    
+	    
+	    
+	    
+	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
+	    
+	    console.log("ratio ETHAmountInput:  ", ETHAmountInput); 
+	    
+	    function parseInputValue(inputValue, decimals) {
+		    if (!inputValue || isNaN(inputValue)) {
+			return "0";
+		    }
+		    // Truncate the value to the allowed decimals
+		    const factor = 10 ** decimals;
+		    const truncatedValue = Math.floor(parseFloat(inputValue) * factor) / factor;
+		    const decimalString = scientificToDecimalStr(truncatedValue);
+		    return ethers.utils.parseUnits(decimalString.toString(), decimals);
+	    }
+	    
+		
+		
+		function decimalToBigNumber(decimalValue, decimals) {
+		    // Split the integer and decimal parts
+		    const [integerPart, decimalPart] = decimalValue.split('.');
+		    
+		    // Convert the integer part to a BigNumber
+		    const integerBigNumber = ethers.BigNumber.from(integerPart);
+
+		    // Convert the decimal part to a BigNumber, if it exists
+		    let decimalBigNumber = ethers.BigNumber.from(0);
+		    if (decimalPart) {
+			// Take only required decimal places and pad the remaining decimals with zeros
+			const trimmedDecimalPart = decimalPart.slice(0, decimals).padEnd(decimals, '0');
+			decimalBigNumber = ethers.BigNumber.from(trimmedDecimalPart);
+		    }
+
+		    // Combine the two parts
+		    return integerBigNumber.mul(ethers.BigNumber.from(10).pow(decimals)).add(decimalBigNumber);
+		}
+
+
+	    var amountInWeiOFETHToken = decimalToBigNumber(ETHAmountInput, 18);
+	    console.log("ELP Amount in WETH : ", (amountInWeiOFETHToken));
+			    // Example function to safely parse input values
+	    
+
+	    const ratioBot2 = amountInWeiOFETHToken;
+	    const ratioBot = ratioBot2.add(ETH_Pool);
+	    console.log("Test12355 ratio top: ", parseInt(amountInWeiOFETHToken)); 
+	    console.log(" Test12355 Ratio bot: ", parseInt(ratioBot));
+	    const ratiozmaybe = amountInWeiOFETHToken / ratioBot;
+	    
+	    console.log("Test12355 ratio = : ", ratiozmaybe);
+	    const minimumAmtOut = ABAS_Pool * ratiozmaybe;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS = : ", minimumAmtOut);
+	    const afterfees = minimumAmtOut * 0.99;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfees);
+	    const afterSlippage = afterfees * 0.95;
+	    console.log("Test12355 ratio afterSlippage: ",afterSlippage);
+	    console.log("Test12355 ratio try1: ", parseFloat(afterSlippage));
+	    console.log("Test12355 ratio try2: ", parseFloat(amountInWeiOFETHToken));
+	    const test1 = String(parseFloat(afterSlippage));
+	    const test2 = String(parseFloat(amountInWeiOFETHToken));
+	    console.log("Test12355 ratio test1: ", test1);
+	    console.log("Test12355 ratio test2: ", test2);
+        
+        
+        
+	    document.getElementById('outputABAS').innerText = `ABAS to Recieve: ${test1/1e18}`;
+        
+	});
+	// Add click event listener to the approve button
+	document.getElementById('approveTokenBtn').addEventListener('click', approveToken);
+	document.getElementById('approveTokenBtn2222').addEventListener('click', approveToken);
+	document.getElementById('estimateGas12').addEventListener('click', estimateGasx3);
+        	// Add click event listener to the approve button
+
+	
+        
+        document.getElementById('trade2Btn').addEventListener('click', trade2);
+        document.getElementById('trade2ETHBtn').addEventListener('click', tradeABAStoETH);
+        
+        
+        // Assuming ratioz is globally available or passed appropriately
+
+	const tokenAmountInput = document.getElementById('tokenAmountInput');
+	const ethAmountInput = document.getElementById('ethAmountInput');
+
+	// Convert ETH to ABAS based on the user's input
+	ethAmountInput.addEventListener('input', () => {
+	    if (!ratioz || ratioz === 0) return; // Check if ratioz is valid
+	    console.log(" Test12355 ABAS_Pool: ", ABAS_Pool.toString());
+	    console.log(" Test12355 ETH_Pool: ", ETH_Pool.toString());
+        
+	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
+	    
+	    console.log("ratio ETHAmountInput:  ", ETHAmountInput); 
+	    
+	    function parseInputValue(inputValue, decimals) {
+		    if (!inputValue || isNaN(inputValue)) {
+			return "0";
+		    }
+		    // Truncate the value to the allowed decimals
+		    const factor = 10 ** decimals;
+		    const truncatedValue = Math.floor(parseFloat(inputValue) * factor) / factor;
+		    const decimalString = scientificToDecimalStr(truncatedValue);
+		    return ethers.utils.parseUnits(decimalString.toString(), decimals);
+	    }
+	    
+		
+		
+		function decimalToBigNumber(decimalValue, decimals) {
+		    // Split the integer and decimal parts
+		    const [integerPart, decimalPart] = decimalValue.split('.');
+		    
+		    // Convert the integer part to a BigNumber
+		    const integerBigNumber = ethers.BigNumber.from(integerPart);
+
+		    // Convert the decimal part to a BigNumber, if it exists
+		    let decimalBigNumber = ethers.BigNumber.from(0);
+		    if (decimalPart) {
+			// Take only required decimal places and pad the remaining decimals with zeros
+			const trimmedDecimalPart = decimalPart.slice(0, decimals).padEnd(decimals, '0');
+			decimalBigNumber = ethers.BigNumber.from(trimmedDecimalPart);
+		    }
+
+		    // Combine the two parts
+		    return integerBigNumber.mul(ethers.BigNumber.from(10).pow(decimals)).add(decimalBigNumber);
+		}
+
+
+	    var amountInWeiOFETHToken = decimalToBigNumber(ETHAmountInput, 18);
+	    console.log("ELP Amount in WETH : ", (amountInWeiOFETHToken));
+			    // Example function to safely parse input values
+	    
+
+	    const ratioBot2 = amountInWeiOFETHToken;
+	    const ratioBot = ratioBot2.add(ETH_Pool);
+	    console.log("Test12355 ratio top: ", parseInt(amountInWeiOFETHToken)); 
+	    console.log(" Test12355 Ratio bot: ", parseInt(ratioBot));
+	    const ratiozmaybe = amountInWeiOFETHToken / ratioBot;
+	    
+	    console.log("Test12355 ratio = : ", ratiozmaybe);
+	    const minimumAmtOut = ABAS_Pool * ratiozmaybe;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS = : ", minimumAmtOut);
+	    const afterfees = minimumAmtOut * 0.99;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfees);
+	    const afterSlippage = afterfees * 0.95;
+	    console.log("Test12355 ratio afterSlippage: ",afterSlippage);
+	    console.log("Test12355 ratio try1: ", parseFloat(afterSlippage));
+	    console.log("Test12355 ratio try2: ", parseFloat(amountInWeiOFETHToken));
+	    const test1 = String(parseFloat(afterSlippage));
+	    const test2 = String(parseFloat(amountInWeiOFETHToken));
+	    console.log("Test12355 ratio test1: ", test1);
+	    console.log("Test12355 ratio test2: ", test2);
+        
+        
+        
+	    document.getElementById('outputABAS').innerText = `ABAS to Recieve: ${test1/1e18}`;
+        
+        
+	  //  const ethAmount = parseFloat(ethAmountInput.value);
+	  //  const tokenAmount = ethAmount / ratioz; // Convert ETH to ABAS
+	  //  tokenAmountInput.value = isNaN(tokenAmount) ? '' : tokenAmount; // Update tokenAmountInput
+	});
+
+	// Convert ABAS to ETH based on the user's input
+	tokenAmountInput.addEventListener('input', () => {
+	    if (!ratioz || ratioz === 0) return; // Check if ratioz is valid
+	     console.log(" Test12355 ABAS_Pool: ", ABAS_Pool.toString());
+	    console.log(" Test12355 ETH_Pool: ", ETH_Pool.toString());
+        
+	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
+	    
+	    console.log("ratio ETHAmountInput:  ", ABASAmountInput); 
+	    
+	    function parseInputValue(inputValue, decimals) {
+		    if (!inputValue || isNaN(inputValue)) {
+			return "0";
+		    }
+		    // Truncate the value to the allowed decimals
+		    const factor = 10 ** decimals;
+		    const truncatedValue = Math.floor(parseFloat(inputValue) * factor) / factor;
+		    const decimalString = scientificToDecimalStr(truncatedValue);
+		    return ethers.utils.parseUnits(decimalString.toString(), decimals);
+	    }
+	    
+		
+		
+		function decimalToBigNumber(decimalValue, decimals) {
+		    // Split the integer and decimal parts
+		    const [integerPart, decimalPart] = decimalValue.split('.');
+		    
+		    // Convert the integer part to a BigNumber
+		    const integerBigNumber = ethers.BigNumber.from(integerPart);
+
+		    // Convert the decimal part to a BigNumber, if it exists
+		    let decimalBigNumber = ethers.BigNumber.from(0);
+		    if (decimalPart) {
+			// Take only required decimal places and pad the remaining decimals with zeros
+			const trimmedDecimalPart = decimalPart.slice(0, decimals).padEnd(decimals, '0');
+			decimalBigNumber = ethers.BigNumber.from(trimmedDecimalPart);
+		    }
+
+		    // Combine the two parts
+		    return integerBigNumber.mul(ethers.BigNumber.from(10).pow(decimals)).add(decimalBigNumber);
+		}
+
+
+	    var amountInWeiOFABASToken = decimalToBigNumber(ABASAmountInput, 18);
+	    console.log("ELP Amount in WETH : ", (amountInWeiOFABASToken));
+			    // Example function to safely parse input values
+	    
+
+	    const ratioBot2 = amountInWeiOFABASToken;
+	    const ratioBot = ratioBot2.add(ABAS_Pool);
+	    console.log("Test12355 ratio top: ", parseInt(amountInWeiOFABASToken)); 
+	    console.log(" Test12355 Ratio bot: ", parseInt(ratioBot));
+	    const ratiozmaybe = amountInWeiOFABASToken / ratioBot;
+	    
+	    console.log("Test12355 ratio = : ", ratiozmaybe);
+	    const minimumAmtOut = ETH_Pool * ratiozmaybe;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS = : ", minimumAmtOut);
+	    const afterfees = minimumAmtOut * 0.99;
+	    console.log("Test12355 ratio MIUMUM RECIEVED IS AFTER FEEES = : ", afterfees);
+	    const afterSlippage = afterfees * 0.95;
+	    console.log("Test12355 ratio afterSlippage: ",afterSlippage);
+	    console.log("Test12355 ratio try1: ", parseFloat(afterSlippage));
+	    console.log("Test12355 ratio try2: ", parseFloat(amountInWeiOFABASToken));
+	    const test1 = String(parseFloat(afterSlippage));
+	    const test2 = String(parseFloat(amountInWeiOFABASToken));
+	    console.log("Test12355 ratio test1: ", test1);
+	    console.log("Test12355 ratio test2: ", test2);
+        
+        
+        
+	    document.getElementById('outputETH').innerText = `ETH to Recieve: ${test1/1e18}`;
+        
+        
+	});
+		
+	// Define a variable outside of your event listener to track the last time the alert was shown
+	let lastAlertTime = 0;
+
+	tokenAmountInput.addEventListener('input', async () => {
+	    const inputAmount = ethers.utils.parseUnits(tokenAmountInput.value || "0", 18);
+	    const trade2ETHBtn = document.getElementById('trade2ETHBtn');
+	    const now = Date.now(); // Current timestamp in milliseconds
+	    const diff = now - lastAlertTime; // Time difference since last alert
+
+	    const maxBalance15 = await fetchTokenBalance();
+		var tokenalues =  ethers.utils.formatUnits(maxBalance15, 18); // Assuming token uses 18 decimal places
+		console.log("1: ", tokenalues);
+		console.log("2: ", parseFloat(tokenAllowance.toString()));
+		if (inputAmount > parseFloat(tokenAllowance.toString())) {
+				if(check == 0){
+				
+	    	    		approveTokenBtn.style.visibility = 'visible';
+	    	    		approveTokenBtn.style.display = '';
+				trade2ETHBtn.style.visibility = '';
+				trade2ETHBtn.style.display = 'none';
+
+				}else{
+				
+				
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.visibility = 'hidden';
+				trade2ETHBtn.style.display = 'none';
+				
+
+				}
+		} else {
+				if(check == 0){
+					trade2ETHBtn.style.visibility = 'visible';
+					trade2ETHBtn.style.display = '';
+				approveTokenBtn.style.visibility = 'hidden';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		
+
+				}else{
+				
+				
+					trade2ETHBtn.style.visibility = 'hidden';
+					trade2ETHBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.display = 'none';
+	    	    		approveTokenBtn.style.visibility = 'hidden';
+	    	    		
+
+				}
+		}
+	});
+    // Your existing conversion logic...
+
+    </script>
+</body>
+</html>
