@@ -371,7 +371,7 @@ async function estimateGasx3() {
        console.log(`Estimated Gas: ${estimatedGas.toString()}`);
              const gasPrice = await provider.getGasPrice();
 
-             const gasPricex3 = gasPrice * 15;
+             const gasPricex3 = gasPrice * 7;
 
         // Convert gas price from wei to gwei
         const gasPriceInGwei = ethers.utils.formatUnits(gasPricex3, 'wei');
@@ -395,7 +395,8 @@ async function estimateGasx3() {
 	    return balance.toString(); // Convert BigNumber to string
 	}
         
-        
+        let tokenBalancezzzz =0;
+        let ethBalancezzzz =0;
         
         async function fetchBalances() {
         
@@ -409,6 +410,7 @@ await fetchMinAmountOfTokens();
             console.log("TBalance: ", tokenBalance);
             document.getElementById('tokenAmountInput').max = ethers.utils.formatEther(tokenBalance);
             const tokenBalance2html = ethers.utils.formatEther(tokenBalance);
+            tokenBalancezzzz = tokenBalance2html;
 	    document.getElementById('YourBalanceABAS').innerText = `Your ABAS Balance: ${tokenBalance2html}`;
             // Fetch ETH balance
             const ethBalance = await provider.getBalance(address);	
@@ -418,7 +420,10 @@ await fetchMinAmountOfTokens();
             	    
             	    const maxBalanceza = await provider.getBalance(userAddy);	
 		    const gasNeeded = await estimateGasx3();
-		    const TotalLeft = maxBalanceza - gasNeeded;
+		    var TotalLeft = maxBalanceza - gasNeeded;
+		    if(TotalLeft < 0){
+            			TotalLeft = 0;
+     		       }
 		    ethAmountInput.value = ethers.utils.formatUnits(TotalLeft, 18); // Assuming token uses 18 decimal places
 		    console.log("total left: ", TotalLeft);
 	   	      console.log(" Test12355 ABAS_Pool: ", ABAS_Pool.toString());
@@ -583,6 +588,7 @@ await fetchMinAmountOfTokens();
             }
             const tokenBalance2html2 = ethers.utils.formatEther(ethBalance);
 	    document.getElementById('YourBalanceETH').innerText = `Your ETH Balance: ${tokenBalance2html2}`;
+	    ethBalancezzzz = tokenBalance2html2;
             console.log("Balances fetched");
             
             const tokenContractff = new ethers.Contract(LPtokenAddress, tokenABI, signer); // Define `tokenAddress` and `tokenABI`
@@ -734,8 +740,10 @@ await fetchMinAmountOfTokens();
             const contractTrade = new ethers.Contract(tradeAddress, tradeABI, signer);
             // Assuming the token uses 18 decimal places; adjust if it's different
 	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
-	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
-	    
+	    var ETHAmountInput = document.getElementById('ethAmountInput').value;
+	    if(parseFloat(ETHAmountInput) < 0){
+	     	ETHAmountInput = "0";
+	     }
 	    
 	    function parseInputValue(inputValue, decimals) {
 		    if (!inputValue || isNaN(inputValue)) {
@@ -772,7 +780,7 @@ await fetchMinAmountOfTokens();
 	    
 	    var tokenAmountInput222 = new BigNumber(document.getElementById('ethAmountInput').value);
 	    var weiMultiplier = new BigNumber("1e18");
-	    
+	    console.log("ETH INPUT TESTZ: ", ETHAmountInput);
 	    var amountInWeiOFWETHToken =  decimalToBigNumber(ETHAmountInput, 18);
 	    console.log("ELP Amount in WETH : ", (amountInWeiOFWETHToken.toString()));
 			    // Example function to safely parse input values
@@ -839,12 +847,15 @@ await fetchMinAmountOfTokens();
             const contract = new ethers.Contract(contractAddress, contractABI, signer);
             const contractTrade = new ethers.Contract(tradeAddress, tradeABI, signer);
             // Assuming the token uses 18 decimal places; adjust if it's different
-	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
+	    var ABASAmountInput = document.getElementById('tokenAmountInput').value;
 	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
 	    
 	    console.log("ratio ETHAmountInput:  ", ETHAmountInput); 
 	    console.log("ratio ABASAmountInput:  ", ABASAmountInput); 
-	    
+	    if(parseFloat(ABASAmountInput) < 0){
+	     	ABASAmountInput = "0";
+	     	document.getElementById('tokenAmountInput').value = "0";
+	     }
 	    function parseInputValue(inputValue, decimals) {
 		    if (!inputValue || isNaN(inputValue)) {
 			return "0";
@@ -922,8 +933,9 @@ await fetchMinAmountOfTokens();
 		    	const datazzzzzzz = error.data.message;
 		    	    if (datazzzzzzz.includes("TransferFrom failed")) {
 		    		alert("Lower your ABAS Amount you are over max");
+		    		} if (datazzzzzzz.includes("Sub underflow")) {
+		    		alert("Lower your ABAS Amount you are over your max");
 		    		}
-		    		
 		    		
 		    		
 		    		
@@ -1148,7 +1160,12 @@ await fetchMinAmountOfTokens();
 	
 	let check =1;
         document.getElementById('swapType').addEventListener('click', async () => {
-	    
+	    if(parseFloat(document.getElementById('tokenAmountInput').value)>tokenBalancezzzz){
+	     		document.getElementById('tokenAmountInput').value = tokenBalancezzzz;
+	     	}
+	     	if(parseFloat(document.getElementById('ethAmountInput').value)>ethBalancezzzz){
+	     	     	document.getElementById('ethAmountInput').value = ethBalancezzzz;
+	        }
 	            // Check the master contract approval status and hide the button if approved
 	    const approveMasterContractBtn = document.getElementById('tokenAmountInput');
 	    const approveMasterContractBtn2 = document.getElementById('tokenAmountInput2');
@@ -1235,6 +1252,13 @@ await fetchMinAmountOfTokens();
 	});
 	
         document.getElementById('swapType2').addEventListener('click', async () => {
+        
+	     	if(parseFloat(document.getElementById('tokenAmountInput').value)>tokenBalancezzzz){
+	     		document.getElementById('tokenAmountInput').value = tokenBalancezzzz;
+	     	}
+	     	if(parseFloat(document.getElementById('ethAmountInput').value)>ethBalancezzzz){
+	     	     	document.getElementById('ethAmountInput').value = ethBalancezzzz;
+	        }
 	               // Check the master contract approval status and hide the button if approved
 	    const approveMasterContractBtn = document.getElementById('tokenAmountInput');
 	    const approveMasterContractBtn2 = document.getElementById('tokenAmountInput2');
@@ -1451,7 +1475,11 @@ await fetchMinAmountOfTokens();
         
             const maxBalanceza = await provider.getBalance(userAddy);	
             const gasNeeded = await estimateGasx3();
-            const TotalLeft = maxBalanceza - gasNeeded;
+            var TotalLeft = maxBalanceza - gasNeeded;
+            if(TotalLeft < 0){
+            	TotalLeft = 0;
+            	alert("You dont have enough ETH to pay for transaction fees, try manually adjusting ETH amount");
+            }
 	    ethAmountInput.value = ethers.utils.formatUnits(TotalLeft, 18); // Assuming token uses 18 decimal places
 	    console.log("total left: ", TotalLeft);
 //	    ethAmountInput.value = ratioz * ethers.utils.formatUnits(maxBalanceza, 18); // Assuming token uses 18 decimal places
@@ -1565,8 +1593,12 @@ await fetchMinAmountOfTokens();
 	    console.log(" Test12355 ABAS_Pool: ", ABAS_Pool.toString());
 	    console.log(" Test12355 ETH_Pool: ", ETH_Pool.toString());
         
-	    const ETHAmountInput = document.getElementById('ethAmountInput').value;
-	    
+	    var ETHAmountInput = document.getElementById('ethAmountInput').value;
+	     if(parseFloat(ETHAmountInput) < 0){
+	     	ETHAmountInput = "0";
+	     	document.getElementById('ethAmountInput').value = "0";
+	     }
+	    console.log("ETH AMOUNT TESTY: ",ETHAmountInput);
 	    console.log("ratio ETHAmountInput:  ", ETHAmountInput); 
 	    
 	    function parseInputValue(inputValue, decimals) {
@@ -1644,10 +1676,13 @@ await fetchMinAmountOfTokens();
 	     console.log(" Test12355 ABAS_Pool: ", ABAS_Pool.toString());
 	    console.log(" Test12355 ETH_Pool: ", ETH_Pool.toString());
         
-	    const ABASAmountInput = document.getElementById('tokenAmountInput').value;
+	    var ABASAmountInput = document.getElementById('tokenAmountInput').value;
 	    
 	    console.log("ratio ETHAmountInput:  ", ABASAmountInput); 
-	    
+	      if(parseFloat(ABASAmountInput) < 0){
+	     	ABASAmountInput = "0";
+	     	document.getElementById('tokenAmountInput').value = "0";
+	     }
 	    function parseInputValue(inputValue, decimals) {
 		    if (!inputValue || isNaN(inputValue)) {
 			return "0";
