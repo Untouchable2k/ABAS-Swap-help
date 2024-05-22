@@ -91,7 +91,7 @@
    <h2 id="Hading">Buy ABAS Token on Sushiswap</h2>
 <button id="connectWalletBtn">Connect Wallet</button><br>
 <div>
-<div id="reloadTimer">Next reload in: 20 seconds</div>
+<div id="reloadTimer">Next reload in: 40 seconds</div>
 <button id="swapType">Click to Swap ETH -> ABAS</button>
 <button id="swapType2">Click to Swap ABAS -> ETH</button>
 
@@ -426,7 +426,7 @@ await fetchMinAmountOfTokens();
             const ethBalance = await provider.getBalance(address);	
             const maxBalance5 = await fetchTokenBalance();
             if(document.getElementById('ethAmountInput').max == 0){
-            	    tokenAmountInput.value = ethers.utils.formatUnits(maxBalance5, 18); // Assuming token uses 18 decimal places
+            	    tokenAmountInput.value = ethers.utils.formatUnits(maxBalance5.toString(), 18); // Assuming token uses 18 decimal places
             	    
             	    const maxBalanceza = await provider.getBalance(userAddy);	
 		    const gasNeeded = await estimateGasx3();
@@ -434,7 +434,7 @@ await fetchMinAmountOfTokens();
 		    if(TotalLeft < 0){
             			TotalLeft = 0;
      		       }
-		    ethAmountInput.value = ethers.utils.formatUnits(TotalLeft, 18); // Assuming token uses 18 decimal places
+		    ethAmountInput.value = ethers.utils.formatUnits(TotalLeft.toString(), 18); // Assuming token uses 18 decimal places
 		    console.log("total left: ", TotalLeft);
 	   	      console.log(" Test12355 ABAS_Pool: ", ABAS_Pool.toString());
 	    console.log(" Test12355 ETH_Pool: ", ETH_Pool.toString());
@@ -1028,7 +1028,7 @@ await fetchMinAmountOfTokens();
 	    };
 
 	    const updateCountdown = () => {
-		let countdown = 20; // Reset countdown to 15 seconds for each cycle
+		let countdown = 40; // Reset countdown to 15 seconds for each cycle
 		clearInterval(countdownIntervalId); // Ensure to clear previous interval to prevent duplicates
 		document.getElementById('reloadTimer').innerText = `Next reload in: ${countdown} seconds`;
 		countdownIntervalId = setInterval(() => {
@@ -1047,7 +1047,7 @@ await fetchMinAmountOfTokens();
 		await reloadData();
 		// The countdown is reset here via updateCountdown at the start of each data reload cycle
 		updateCountdown(); 
-	    }, 20000); // Set to reload data every 15 seconds
+	    }, 40000); // Set to reload data every 15 seconds
 
 	    // Initial load and start of the countdown
 	    updateCountdown();
