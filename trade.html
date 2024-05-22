@@ -1159,6 +1159,8 @@ await fetchMinAmountOfTokens();
 		
 	    	    
 	    	
+	    	    trade2Btn.style.visibility = 'hidden';
+	    	    trade2Btn.style.display = 'none';
 	    	    const maxBalancef = await fetchTokenBalance();
 		var tokenalues =  ethers.utils.formatUnits(maxBalancef, 18); // Assuming token uses 18 decimal places
 	    if (tokenalues > parseFloat(tokenAllowance.toString())) {
