@@ -1115,6 +1115,8 @@ await fetchMinAmountOfTokens();
 	    const approveMasterContractBtn12 = document.getElementById('trade2ETHBtn');
 	    
 	    if (check == 1) {
+	    
+	    console.log("ztest123 Check == 1");
 		approveMasterContractBtn.style.display = 'none'; // Hide the button
 		approveMasterContractBtn2.style.display = 'none'; // Hide the button
 		approveMasterContractBtn3.style.display = 'none'; // Hide the button
@@ -1132,13 +1134,14 @@ await fetchMinAmountOfTokens();
 	    	    
 	    	    		approveTokenBtn.style.display = 'none';
 	    	    	     approveTokenBtn.style.visibility = 'hidden';
-	    	    trade2ETHBtn.style.visibility = 'visible';
-	    	    trade2ETHBtn.style.display = '';
+	    	    trade2ETHBtn.style.visibility = 'hidden';
+	    	    trade2ETHBtn.style.display = 'none';
+	    	    trade2Btn.style.visibility = 'visible';
+	    	    trade2Btn.style.display = '';
+
 	    
-		approveMasterContractBtn11.style.visibility = 'hidden'; // Hide the button
-	    
-		check = 0;
 	    } else {
+	    console.log("ztest123");
 		approveMasterContractBtn.style.display = ''; // Show the button if not approved
 		approveMasterContractBtn2.style.display = ''; // Show the button if not approved
 		approveMasterContractBtn3.style.display = ''; // Show the button if not approved
@@ -1153,9 +1156,7 @@ await fetchMinAmountOfTokens();
 		approveMasterContractBtn7.style.display = 'none'; // Hide the button
 		approveMasterContractBtn9.style.display = 'none'; // Hide the button
 		approveMasterContractBtn10.style.display = 'none'; // Hide the button
-		check = 1;
 		
-	    	    trade2ETHBtn.style.visibility = 'hidden';
 	    	    
 	    	
 	    	    const maxBalancef = await fetchTokenBalance();
